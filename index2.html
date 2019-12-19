@@ -1,0 +1,95 @@
+
+<!doctype html>
+<html>
+
+<head>
+	<title>Stacked Bar Chart</title>
+	<script src="./js/Chart.min.js"></script>
+	<script src="./js/utils.js"></script>
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<div style="width: 75%">
+		<canvas id="canvas"></canvas>
+	</div>
+	<button id="randomizeData">Randomize Data</button>
+	<script>
+		var barChartData = {
+			labels: [''],
+			datasets: [{
+				label: '2019-12-19',
+				backgroundColor: window.chartColors.blue,
+				data: [
+					0
+				]
+			},
+            {
+				label: '2019-12-18',
+				backgroundColor: window.chartColors.red,
+				data: [
+					7300
+				]
+			}]
+
+		};
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+
+			window.myBar = new Chart(ctx, {
+				type: 'horizontalBar',
+				data: barChartData,
+				options: {
+					title: {
+						display: true,
+						text: 'Virada de Agencia'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false
+					},
+					responsive: true,
+					scales: {
+						xAxes: [{
+							stacked: true,
+						}],
+						yAxes: [{
+							stacked: true
+						}]
+					}
+				}
+			});
+		};
+
+		document.getElementById('randomizeData').addEventListener('click', function() {
+            var ctl = true;
+            var anterior = barChartData.datasets[1].data[0];
+            var atual = barChartData.datasets[0].data[0];
+            random = Math.floor((Math.random() * 1000) + 1);
+            if(anterior < random)
+                random = anterior
+            barChartData.datasets[1].data[0] = anterior - random;
+            barChartData.datasets[0].data[0] = atual + random;
+            console.log(random)
+            if(barChartData.datasets[1].data[0]<=0){
+                barChartData.datasets[1].data[0] = 0;
+                ctl = false;
+            }
+            window.myBar.update();
+            sleep(100);
+		});
+
+        function sleep(ms) {
+            var unixtime_ms = new Date().getTime();
+            while(new Date().getTime() < unixtime_ms + ms) {}
+        }
+	</script>
+</body>
+
+</html>
